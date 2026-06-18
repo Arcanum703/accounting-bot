@@ -1,0 +1,81 @@
+source_ref,description,amount,true_category,true_subcategory
+bank_statement.csv:0,Top-Up by Card *4421,3000.00,excluded,owner_contribution
+bank_statement.csv:1,PAYMENT FROM ACME LTD INV-1001,1850.00,revenue,revenue
+bank_statement.csv:2,RENT - WESTGATE PROPERTIES,-1200.00,expense,rent
+bank_statement.csv:3,INV 0042,900.00,revenue,revenue
+bank_statement.csv:4,ADOBE SUBSCRIPTION,-49.99,expense,other_opex
+bank_statement.csv:5,GOOGLE WORKSPACE,-11.04,expense,other_opex
+bank_statement.csv:6,STAPLES OFFICE SUPPLIES,-63.80,expense,supplies
+bank_statement.csv:7,PRINT MATERIALS LTD,-342.00,expense,cogs
+bank_statement.csv:8,PAYMENT FROM SAVINGS VAULT,2000.00,excluded,transfer
+bank_statement.csv:9,BT INTERNET,-42.00,expense,utilities
+bank_statement.csv:10,CANVA PRO,-12.99,expense,other_opex
+bank_statement.csv:11,STRIPE PAYOUT,640.00,revenue,revenue
+bank_statement.csv:12,BRITISH GAS,-95.40,expense,utilities
+bank_statement.csv:13,SQ *BLUE ROOM STUDIO,480.00,revenue,revenue
+bank_statement.csv:14,Revolut card delivery fee,-4.99,expense,fees
+bank_statement.csv:15,SALARY - J SMITH,-1600.00,expense,salaries
+bank_statement.csv:16,SALARY - A PATEL,-1400.00,expense,salaries
+bank_statement.csv:17,BRAUHAUS MÜNCHEN GMBH,-38.60,expense,other_opex
+bank_statement.csv:18,APPLE STORE MACBOOK PRO,-1999.00,excluded,capital_purchase
+bank_statement.csv:19,FACEBOOK ADS,-75.00,expense,other_opex
+bank_statement.csv:20,TO SAVINGS VAULT,-1500.00,excluded,transfer
+bank_statement.csv:21,PAYMENT FROM HARLOW PRINTS,430.00,revenue,revenue
+bank_statement.csv:22,REFUND - STAPLES OFFICE SUPPLIES,63.80,excluded,refund
+bank_statement.csv:23,Exchange GBP to EUR,-300.00,excluded,transfer
+bank_statement.csv:24,INK & TONER CO,-88.20,expense,cogs
+bank_statement.csv:25,RENT - WESTGATE PROPERTIES,-1200.00,expense,rent
+bank_statement.csv:26,PAYMENT FROM ACME LTD INV-1002,1850.00,revenue,revenue
+bank_statement.csv:27,LOAN DISBURSEMENT BARCLAYS BUSINESS,5000.00,excluded,loan_in
+bank_statement.csv:28,ADOBE SUBSCRIPTION,-49.99,expense,other_opex
+bank_statement.csv:29,GOOGLE WORKSPACE,-11.04,expense,other_opex
+bank_statement.csv:30,GUMROAD SALES PAYOUT,320.00,revenue,revenue
+bank_statement.csv:31,THAMES WATER,-28.10,expense,utilities
+bank_statement.csv:32,RYMAN STATIONERY,-37.50,expense,supplies
+bank_statement.csv:33,ROYAL MAIL POSTAGE,-23.40,expense,other_opex
+bank_statement.csv:34,PAYMENT,250.00,revenue,revenue
+bank_statement.csv:35,PRINT MATERIALS LTD,-410.00,expense,cogs
+bank_statement.csv:36,BT INTERNET,-42.00,expense,utilities
+bank_statement.csv:37,BRITISH GAS,-101.20,expense,utilities
+bank_statement.csv:38,PAYMENT FROM RIVERSIDE CAFE,540.00,revenue,revenue
+bank_statement.csv:39,LOAN REPAYMENT BARCLAYS,-450.00,excluded,loan_out
+bank_statement.csv:40,SALARY - J SMITH,-1600.00,expense,salaries
+bank_statement.csv:41,SALARY - A PATEL,-1400.00,expense,salaries
+bank_statement.csv:42,LINKEDIN ADS,-60.00,expense,other_opex
+bank_statement.csv:43,OWNER DRAW - A FOUNDER,-800.00,excluded,owner_draw
+bank_statement.csv:44,ATM WITHDRAWAL HIGH ST,-200.00,excluded,owner_draw
+bank_statement.csv:45,Revolut monthly plan fee,-6.99,expense,fees
+bank_statement.csv:46,STRIPE PAYOUT,510.00,revenue,revenue
+bank_statement.csv:47,IKEA BUSINESS,-118.00,expense,supplies
+bank_statement.csv:48,HMRC VAT REFUND,180.00,excluded,refund
+bank_statement.csv:49,AMZN MKTP UK,-54.30,expense,supplies
+bank_statement.csv:50,PAYMENT FROM ACME LTD INV-1002B,600.00,revenue,revenue
+bank_statement.csv:51,Exchange EUR to GBP,120.00,excluded,transfer
+bank_statement.csv:52,RENT - WESTGATE PROPERTIES,-1200.00,expense,rent
+bank_statement.csv:53,PAYMENT FROM ACME LTD INV-1003,1850.00,revenue,revenue
+bank_statement.csv:54,ADOBE SUBSCRIPTION,-49.99,expense,other_opex
+bank_statement.csv:55,GOOGLE WORKSPACE,-11.04,expense,other_opex
+bank_statement.csv:56,STRIPE PAYOUT,720.00,revenue,revenue
+bank_statement.csv:57,PRINT MATERIALS LTD,-298.00,expense,cogs
+bank_statement.csv:58,SLACK SUBSCRIPTION,-7.50,expense,other_opex
+bank_statement.csv:59,BT INTERNET,-42.00,expense,utilities
+bank_statement.csv:60,BRITISH GAS,-88.70,expense,utilities
+bank_statement.csv:61,DELL MONITOR REFURB,-189.00,excluded,capital_purchase
+bank_statement.csv:62,PAYMENT FROM ORTON DESIGN,960.00,revenue,revenue
+bank_statement.csv:63,PAYPAL *PAPERWORLD,-132.40,expense,cogs
+bank_statement.csv:64,SALARY - J SMITH,-1600.00,expense,salaries
+bank_statement.csv:65,SALARY - A PATEL,-1400.00,expense,salaries
+bank_statement.csv:66,HMRC PAYE,-420.00,expense,taxes
+bank_statement.csv:67,HMRC VAT,-780.00,expense,taxes
+bank_statement.csv:68,LOAN REPAYMENT BARCLAYS,-450.00,excluded,loan_out
+bank_statement.csv:69,FACEBOOK ADS,-90.00,expense,other_opex
+bank_statement.csv:70,ÇIGKOFTEM ISTANBUL,-22.15,expense,other_opex
+bank_statement.csv:71,PRINT MATERIALS LTD,-156.00,expense,cogs
+bank_statement.csv:72,PAYMENT FROM BENNETT & CO,1200.00,revenue,revenue
+bank_statement.csv:73,Revolut FX fee,-3.40,expense,fees
+bank_statement.csv:74,INK & TONER CO,-76.50,expense,cogs
+bank_statement.csv:75,TO SAVINGS VAULT,-1000.00,excluded,transfer
+bank_statement.csv:76,AMZN MKTP UK REFUND,18.50,excluded,refund
+bank_statement.csv:77,THAMES WATER,-29.40,expense,utilities
+bank_statement.csv:78,FUNDS FROM A FOUNDER PERSONAL,1500.00,excluded,owner_contribution
+bank_statement.csv:79,PAYMENT FROM ACME LTD INV-1004,1850.00,revenue,revenue

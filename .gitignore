@@ -1,0 +1,42 @@
+# === Secrets & credentials — NEVER COMMIT ===
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.keystore
+id_rsa
+id_rsa.*
+*_rsa
+credentials.json
+secrets.json
+serviceAccount*.json
+
+# === Local store + uploads (generated runtime data) ===
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+data/uploads/
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# === OS / editor cruft ===
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
