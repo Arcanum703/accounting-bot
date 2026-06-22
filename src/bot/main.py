@@ -1,9 +1,10 @@
 """Telegram bot (polling mode) for the cash-basis income statement.
 
-Phase 1 handlers:
+Handlers:
   document (.csv/.xlsx)  -> parse -> classify -> store -> aggregate -> reply
+  free text              -> Q&A agent (sql_query / vector_search / filter), cited
   /statement             -> re-send the current income statement
-  /reset                 -> clear the store + classification cache
+  /reset                 -> clear the store + classification cache + vector index
   /start, /help          -> short usage text
 
 Polling mode (CLAUDE.md Stack): no webhook / public server needed.
@@ -13,13 +14,14 @@ Run:  python -m src.bot.main      (after setting TELEGRAM_BOT_TOKEN in .env)
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import tempfile
 
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.constants import ParseMode
+from telegram.constants import ChatAction, ParseMode
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -28,7 +30,7 @@ from telegram.ext import (
     filters,
 )
 
-from src.core import aggregate, pipeline, store
+from src.core import aggregate, pipeline, qa_agent, store
 
 logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s %(message)s", level=logging.INFO
@@ -41,6 +43,9 @@ START_TEXT = (
     "with a *cash-basis income statement*: revenue, expenses by category, the "
     "excluded items (transfers, loans, owner draws, capital, refunds) shown "
     "separately, and net income.\n\n"
+    "Once a statement is loaded, just *ask questions* in plain language, e.g. "
+    "“how much did I spend on utilities in May?” or “anything about eating out "
+    "abroad?” — answers cite the exact transaction ids.\n\n"
     "Commands:\n"
     "  /statement — re-send the current statement\n"
     "  /reset — clear stored data\n"
@@ -97,24 +102,53 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         local_path = os.path.join(tmp, doc.file_name or f"statement{ext}")
         await tg_file.download_to_drive(custom_path=local_path)
         try:
-            stats = pipeline.ingest(local_path, conn)
+            result = pipeline.run_pipeline(local_path, conn)
         except Exception as exc:  # surface parse/classify errors to the user
-            log.exception("Ingest failed")
+            log.exception("Pipeline failed")
             await update.message.reply_text(f"⚠️ Could not process the file: {exc}")
             return
 
-    summary = pipeline.build_summary(conn)
     header = (
-        f"✅ Processed {stats.rows_parsed} transactions "
-        f"({stats.rows_inserted} new"
-        + (f", {stats.cache_hits} cached classifications" if stats.cache_hits else "")
+        f"✅ Processed {result.rows_parsed} transactions "
+        f"({result.rows_inserted} new"
+        + (f", {result.cache_hits} cached classifications" if result.cache_hits else "")
         + ")."
     )
+    warnings = result.validation.warnings()
+    if warnings:
+        header += "\n\n⚠️ " + "\n⚠️ ".join(warnings)
     await update.message.reply_text(header)
     await update.message.reply_text(
-        _mono(aggregate.render_statement_text(summary)),
+        _mono(aggregate.render_statement_text(result.summary)),
         parse_mode=ParseMode.MARKDOWN,
     )
+
+
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Free-text questions -> Q&A agent (sql_query / vector_search / filter)."""
+    conn = context.bot_data["conn"]
+    if store.count_transactions(conn) == 0:
+        await update.message.reply_text(
+            "No data yet — send me a statement file first, then ask away."
+        )
+        return
+
+    question = update.message.text
+    await update.message.chat.send_action(ChatAction.TYPING)
+    try:
+        # The agent runs synchronous LLM/tool calls; off-load it so the event
+        # loop isn't blocked. Tools open their own SQLite connections, so this is
+        # thread-safe.
+        result = await asyncio.to_thread(qa_agent.answer_question, question)
+    except Exception as exc:
+        log.exception("Q&A failed")
+        await update.message.reply_text(f"⚠️ Sorry, I couldn't answer that: {exc}")
+        return
+
+    answer = result["answer"] or "I couldn't find an answer in the data."
+    if result["tools_used"]:
+        answer += f"\n\n_via {', '.join(dict.fromkeys(result['tools_used']))}_"
+    await update.message.reply_text(answer, parse_mode=ParseMode.MARKDOWN)
 
 
 def build_application(token: str) -> Application:
@@ -128,6 +162,8 @@ def build_application(token: str) -> Application:
     app.add_handler(CommandHandler("reset", reset))
     app.add_handler(CommandHandler("statement", statement))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
+    # Any non-command text -> Q&A agent.
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     return app
 
 

@@ -11,13 +11,15 @@ pandas>=2.0                   # deterministic statement parsing
 openpyxl>=3.1                 # XLSX reading for pandas
 python-dotenv>=1.0            # load secrets from .env
 
+# --- Phase 2 (active): LLM classifier + LangGraph pipeline ---
+langgraph>=1.4                # parse->classify->store->aggregate->validate graph
+langchain-core>=1.4.7         # messages + structured output (pin: langgraph 1.x needs it)
+langchain-cerebras>=0.5       # ChatCerebras (default provider)
+langchain-google-genai>=2.0   # ChatGoogleGenerativeAI (Gemini, alternative)
+
+# --- Phase 3 (active): Q&A agent + local vector store ---
+chromadb>=0.5                 # local/in-process vector store (Q&A only)
+sentence-transformers>=3.0    # multilingual embeddings, LOCAL (paraphrase-multilingual-MiniLM-L12-v2)
+
 # --- Phase 0 data generation (optional; used by scripts/) ---
 reportlab>=4.0                # multilingual demo invoice PDFs
-
-# --- Later phases (commented until needed) ---
-# langgraph>=0.2              # Phase: pipeline + Q&A graphs
-# langchain>=0.3              # LLM interface + tools
-# langchain-anthropic>=0.2    # Anthropic chat model
-# langchain-openai>=0.2       # OpenAI chat model (alternative)
-# chromadb>=0.5               # local vector store (Q&A)
-# sentence-transformers>=3.0  # multilingual embeddings

@@ -21,6 +21,9 @@ serviceAccount*.json
 *.sqlite
 *.sqlite3
 data/uploads/
+data/chroma/
+*.log
+.cache/
 
 # === Python ===
 __pycache__/

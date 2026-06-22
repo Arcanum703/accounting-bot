@@ -35,6 +35,8 @@ class Summary:
     net_income: float = 0.0
     n_transactions: int = 0
     n_low_confidence: int = 0
+    date_from: str = ""
+    date_to: str = ""
 
     @property
     def low_confidence_threshold(self) -> float:
@@ -50,6 +52,10 @@ def summarize(rows: Iterable[Mapping]) -> Summary:
     rows = list(rows)
     s = Summary()
     s.n_transactions = len(rows)
+
+    dates = [r["date"] for r in rows if r["date"]]
+    if dates:
+        s.date_from, s.date_to = min(dates), max(dates)
 
     revenue = 0.0
     expense_signed = defaultdict(float)   # signed sums (outflows are negative)
@@ -100,72 +106,92 @@ def summarize(rows: Iterable[Mapping]) -> Summary:
 # Rendering
 # --------------------------------------------------------------------------- #
 
-_SUB_LABELS = {
-    "cogs": "Cost of goods sold",
+# Short labels for a clean, phone-width statement.
+_SHORT_LABELS = {
+    "cogs": "COGS",
     "rent": "Rent",
     "salaries": "Salaries",
     "utilities": "Utilities",
     "supplies": "Supplies",
-    "fees": "Bank/transaction fees",
+    "fees": "Fees",
     "taxes": "Taxes",
-    "other_opex": "Other operating expenses",
-    "transfer": "Internal transfers",
+    "other_opex": "Other opex",
+    "transfer": "Transfers",
     "loan_in": "Loan received",
-    "loan_out": "Loan repayment",
+    "loan_out": "Loan repaid",
     "owner_draw": "Owner draw",
-    "owner_contribution": "Owner contribution",
-    "capital_purchase": "Capital purchase (equipment)",
+    "owner_contribution": "Owner capital",
+    "capital_purchase": "Equipment",
     "refund": "Refunds",
 }
 
+_CURRENCY_SYMBOLS = {"GBP": "£", "USD": "$", "EUR": "€"}
 
-def _money(value: float, currency: str) -> str:
-    return f"{value:>12,.2f} {currency}"
+# Column geometry (keeps the block narrow enough for a phone screen).
+_LABEL_W = 16
+_NUM_W = 13
+_RULE = "─" * (_LABEL_W + _NUM_W)
+
+
+def _amount(value: float, sym: str, mode: str = "plain") -> str:
+    """mode: 'plain' (no sign), 'loss' (− only when negative), 'signed' (+/−)."""
+    if mode == "signed":
+        sign = "−" if value < 0 else "+"
+        body = f"{sign}{sym}{abs(value):,.2f}"
+    elif mode == "loss":
+        body = f"{'−' if value < 0 else ''}{sym}{abs(value):,.2f}"
+    else:
+        body = f"{sym}{value:,.2f}"
+    return body
+
+
+def _row(label: str, value: float, sym: str, indent: int = 0,
+         mode: str = "plain") -> str:
+    left = (" " * indent + label).ljust(_LABEL_W)
+    return left + _amount(value, sym, mode).rjust(_NUM_W)
 
 
 def render_statement_text(s: Summary) -> str:
-    """Format the Summary as a monospace block suitable for Telegram."""
-    cur = s.currency or ""
-    lines: list[str] = []
-    lines.append("CASH-BASIS INCOME STATEMENT")
-    lines.append("(financial summary — cash movements only)")
-    lines.append("=" * 44)
+    """Format the Summary as a clean monospace block for Telegram."""
+    sym = _CURRENCY_SYMBOLS.get(s.currency, (s.currency + " ") if s.currency else "")
+    out: list[str] = []
 
-    lines.append("")
-    lines.append("REVENUE")
-    lines.append(f"  {'Sales / income received':<26}{_money(s.revenue_total, cur)}")
+    out.append("Income statement · cash basis")
+    period = f"{s.date_from} → {s.date_to}" if s.date_from else ""
+    meta = " · ".join(x for x in (period, f"{s.n_transactions} transactions") if x)
+    if meta:
+        out.append(meta)
+    out.append("")
 
-    lines.append("")
-    lines.append("EXPENSES")
+    out.append(_row("Revenue", s.revenue_total, sym))
+    out.append("")
+
+    out.append("Expenses")
     if s.expense_by_sub:
-        for sub, amount in s.expense_by_sub.items():
-            lines.append(f"  {_SUB_LABELS.get(sub, sub):<26}{_money(amount, cur)}")
+        for sub, amount in sorted(s.expense_by_sub.items(), key=lambda kv: -kv[1]):
+            out.append(_row(_SHORT_LABELS.get(sub, sub), amount, sym, indent=2))
+        out.append(_RULE)
+        out.append(_row("Total", s.expense_total, sym, indent=2))
     else:
-        lines.append("  (none)")
-    lines.append(f"  {'-' * 40}")
-    lines.append(f"  {'Total expenses':<26}{_money(s.expense_total, cur)}")
+        out.append("  (none)")
+    out.append("")
 
-    lines.append("")
-    lines.append("=" * 44)
-    lines.append(f"  {'NET INCOME (cash basis)':<26}{_money(s.net_income, cur)}")
-    lines.append("=" * 44)
+    out.append(_row("NET INCOME", s.net_income, sym, mode="loss")
+               + ("  (loss)" if s.net_income < 0 else ""))
 
-    lines.append("")
-    lines.append("EXCLUDED — not part of net income")
-    lines.append("(transfers, loans, owner draws/contributions, capital, refunds)")
+    out.append("")
+    out.append("Excluded · not in net income")
     if s.excluded_by_sub:
-        for sub, amount in s.excluded_by_sub.items():
-            lines.append(f"  {_SUB_LABELS.get(sub, sub):<26}{_money(amount, cur)}")
-        lines.append(f"  {'-' * 40}")
-        lines.append(f"  {'Net excluded cash flow':<26}{_money(s.excluded_total, cur)}")
+        for sub, amount in sorted(s.excluded_by_sub.items(), key=lambda kv: -kv[1]):
+            out.append(_row(_SHORT_LABELS.get(sub, sub), amount, sym,
+                            indent=2, mode="signed"))
+        out.append(_RULE)
+        out.append(_row("Net flow", s.excluded_total, sym, indent=2, mode="signed"))
     else:
-        lines.append("  (none)")
+        out.append("  (none)")
 
-    lines.append("")
-    lines.append("-" * 44)
-    note = f"{s.n_transactions} transactions"
     if s.n_low_confidence:
-        note += (f" · {s.n_low_confidence} low-confidence "
-                 f"(< {s.low_confidence_threshold:.1f}) — review suggested")
-    lines.append(note)
-    return "\n".join(lines)
+        out.append("")
+        out.append(f"⚠ {s.n_low_confidence} low-confidence row(s) — review suggested")
+
+    return "\n".join(out)

@@ -33,9 +33,9 @@ The project's purpose is the Central Asian market (Russian / Kyrgyz / English do
 - `chromadb` (local / in-process, no server)
 - `sentence-transformers` with **`paraphrase-multilingual-MiniLM-L12-v2`** for embeddings (local, no API key, works on EN/RU/KY)
 - `sqlite3` (standard library) — the structured store and source of truth
-- LLM for classification + Q&A reasoning: a hosted chat model behind a single `get_llm()` factory in one module, so it is swappable. Default to whichever API key is present in `.env` (Anthropic or OpenAI). **Temperature 0** everywhere — this tool must be reproducible.
+- LLM for classification + Q&A reasoning: Google Gemini via `langchain-google-genai` (`ChatGoogleGenerativeAI`), model **`gemini-2.5-flash`**, behind a single `get_llm()` factory in one module so it stays swappable. Reads `GOOGLE_API_KEY` from `.env`. **Do NOT use a Gemini 3.x model here** — `langchain-google-genai` forces temperature to 1.0 on Gemini 3+, which destroys the reproducibility guarantee. **Temperature 0** everywhere — this tool must be reproducible (the description cache is the primary guarantee; temperature 0 reinforces it).
 
-Secrets in `.env` (never commit): `TELEGRAM_BOT_TOKEN`, and one of `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`.
+Secrets in `.env` (never commit): `TELEGRAM_BOT_TOKEN` and `GOOGLE_API_KEY`. Embeddings stay local (sentence-transformers), so no embedding API key is needed.
 
 ## Architecture (the one diagram that matters)
 

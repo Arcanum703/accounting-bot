@@ -1,0 +1,62 @@
+# Q&A evaluation pairs for eval/test_qa.py.
+#
+# Each pair: a question plus what a correct answer must contain.
+#   expect_contains : substrings that must ALL appear in the answer
+#                     (matching is case-insensitive and comma-insensitive, so
+#                     "13320" matches "£13,320.00").
+#   expect_tool     : the tool the agent should route to (sql_query / vector_search).
+#   expect_no_data  : true if the answer should state the data has no such thing
+#                     (honesty check — the agent must NOT invent a figure).
+#
+# Figures are the ground truth computed by SQL over the stored demo statement.
+
+- id: utilities_may
+  question: "How much did I spend on utilities in May 2025?"
+  expect_contains: ["171.3"]
+  expect_tool: sql_query
+
+- id: total_revenue
+  question: "What was my total revenue over the whole period?"
+  expect_contains: ["13320"]
+  expect_tool: sql_query
+
+- id: total_salaries
+  question: "How much did I pay in salaries altogether?"
+  expect_contains: ["9000"]
+  expect_tool: sql_query
+
+- id: net_income
+  question: "What is the net income on a cash basis?"
+  expect_contains: ["2655.61"]
+  expect_tool: sql_query
+
+- id: loan_received
+  question: "How much money did I receive from the bank loan?"
+  expect_contains: ["5000"]
+  expect_tool: sql_query
+
+- id: total_rent
+  question: "How much rent did I pay over the whole period?"
+  expect_contains: ["3120"]
+  expect_tool: sql_query
+
+- id: transaction_count
+  question: "How many transactions are there in total?"
+  expect_contains: ["80"]
+  expect_tool: sql_query
+
+- id: eating_out_abroad
+  question: "Was there any spending on eating out or a restaurant while abroad?"
+  # The two abroad-restaurant rows are #18 (Brauhaus München) and #71 (Çiğköftem
+  # Istanbul). A correct answer cites them; it need not echo the merchant name.
+  expect_contains: ["#71"]
+  expect_tool: vector_search
+
+- id: new_laptop
+  question: "Find the transaction for the new laptop or computer I bought."
+  expect_contains: ["macbook"]
+  expect_tool: vector_search
+
+- id: absent_crypto
+  question: "Do the transactions include any cryptocurrency or Bitcoin purchases?"
+  expect_no_data: true

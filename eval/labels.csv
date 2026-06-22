@@ -46,7 +46,7 @@ bank_statement.csv:43,OWNER DRAW - A FOUNDER,-800.00,excluded,owner_draw
 bank_statement.csv:44,ATM WITHDRAWAL HIGH ST,-200.00,excluded,owner_draw
 bank_statement.csv:45,Revolut monthly plan fee,-6.99,expense,fees
 bank_statement.csv:46,STRIPE PAYOUT,510.00,revenue,revenue
-bank_statement.csv:47,IKEA BUSINESS,-118.00,expense,supplies
+bank_statement.csv:47,IKEA BUSINESS,-118.00,excluded,capital_purchase
 bank_statement.csv:48,HMRC VAT REFUND,180.00,excluded,refund
 bank_statement.csv:49,AMZN MKTP UK,-54.30,expense,supplies
 bank_statement.csv:50,PAYMENT FROM ACME LTD INV-1002B,600.00,revenue,revenue

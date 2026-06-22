@@ -1,30 +1,77 @@
 # Accounting Telegram Bot
 
 A Telegram bot that turns a bank statement (CSV/XLSX) into a **cash-basis income
-statement**. Designed for the Central Asian market (RU / KY / EN documents),
+statement**, plus an agentic Q&A interface over the same transactions. Send a
+statement file into the chat; the bot parses it, classifies each transaction with
+an LLM, stores everything, and replies with a categorized income statement. You
+can then ask free-text questions ("how much did I spend on utilities in May?") and
+get answers that cite the exact source transactions.
+
+Designed for the Central Asian market (Russian / Kyrgyz / English documents), and
 demoed on English Revolut data.
 
-> **Scope (honest):** this produces a *cash-basis income statement* — a
-> categorized summary of bank **cash movements** only. It is **not** a balance
-> sheet / statement of financial position: a bank statement contains no
-> asset/liability/equity data, so those cannot be produced here.
+> **Scope (honest):** the output is a *cash-basis income statement* — a categorized
+> summary of bank **cash movements** only. It is **not** a balance sheet / statement
+> of financial position: a bank statement contains no asset/liability/equity data,
+> so those cannot be produced here.
 
-## Status
+## What it does
 
-- **Phase 0** — synthetic Revolut statement + draft labels (`scripts/generate_data.py`),
-  multilingual demo invoices (`scripts/generate_invoices.py`).
-- **Phase 1 (current)** — runnable bot: deterministic parse → **temporary
-  rule-based classifier** → SQLite → cash-basis income statement.
-  The classifier is a keyword/Type heuristic and is replaced by an LLM in Phase 2.
+- **Parses** a Revolut export deterministically with pandas — amounts are read by
+  code and **never** produced by the LLM.
+- **Classifies** each distinct transaction with an LLM (Cerebras or Gemini) into a
+  three-bucket taxonomy — `revenue`, `expense`, `excluded` — reading description
+  text + the Type column only, never the amount. Results are cached (per
+  provider+model, at temperature 0), so the same statement classified twice gives
+  identical totals.
+- **Aggregates** deterministically over every stored row into a cash-basis income
+  statement. The `excluded` bucket (transfers, loans, owner draws/contributions,
+  capital purchases, refunds) is reported separately and kept **out** of net income.
+- **Validates** the result (all rows classified, totals reconcile, no double-counted
+  duplicates, low-confidence + outlier flags).
+- **Answers questions** via an agentic Q&A subgraph that cites source transaction
+  ids and refuses to invent figures.
+
+## Architecture
+
+```
+Bank statement (XLSX/CSV)
+        │  parse  (pandas — DETERMINISTIC, numbers never touch the LLM)
+        ▼
+  Canonical transactions
+        │  classify (LLM reads DESCRIPTION TEXT + Type ONLY, cached, temp 0)
+        ▼
+   SQLite store  ◄──────────────── SOURCE OF TRUTH
+        ├─ aggregate (deterministic sum over ALL rows) ─► Income statement  → /statement
+        └─ Q&A agent ─► answers                                            → free-text messages
+              ├─ sql_query tool   (numeric questions — exact, complete)
+              ├─ vector_search    (Chroma — ONLY for fuzzy/semantic questions)
+              └─ filter tool      (date / vendor / category)
+```
+
+The pipeline is a LangGraph graph (`parse → classify → store → aggregate →
+validate`); the Q&A interface is a **separate** agentic LangGraph subgraph (the LLM
+chooses between three tools), not a single retrieval chain. Descriptions are
+embedded into a local Chroma index with `paraphrase-multilingual-MiniLM-L12-v2`
+(local, multilingual, no API key) — used **only** for semantic Q&A, never to
+compute a total.
 
 ## Setup
 
 ```bash
-python -m venv .venv && . .venv/Scripts/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv && .venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 
-cp .env.example .env        # then add your TELEGRAM_BOT_TOKEN from @BotFather
+cp .env.example .env        # then fill in the values below
 ```
+
+`.env` needs:
+- `TELEGRAM_BOT_TOKEN` — from @BotFather.
+- An LLM provider. Default is **Cerebras**: set `LLM_PROVIDER=cerebras`,
+  `CEREBRAS_API_KEY`, `CEREBRAS_MODEL` (e.g. `gpt-oss-120b` — list your account's
+  models at `GET https://api.cerebras.ai/v1/models`). To use Gemini instead, set
+  `LLM_PROVIDER=gemini`, `GOOGLE_API_KEY`, `GEMINI_MODEL=gemini-2.5-flash` (do **not**
+  use a Gemini 3.x model — it forces temperature 1.0 and breaks reproducibility).
 
 ## Run the bot
 
@@ -32,27 +79,60 @@ cp .env.example .env        # then add your TELEGRAM_BOT_TOKEN from @BotFather
 python -m src.bot.main
 ```
 
-Then in Telegram: send the statement file (`data/bank_statement.csv`) to your bot.
-It replies with the income statement.
-
-Commands: `/statement` (re-send), `/reset` (clear data), `/start` · `/help`.
+Then in Telegram: send `data/bank_statement.csv` to your bot. It replies with the
+income statement. After that, just ask questions in plain language. Commands:
+`/statement` (re-send), `/reset` (clear store + cache + vector index), `/start` · `/help`.
 
 ## Try it without Telegram
 
-Run the pipeline straight from the CLI to see the statement printed:
+```bash
+python -m src.core.pipeline data/bank_statement.csv   # prints the income statement
+```
+
+## Evaluation
+
+The demo runs on synthetic data generated by `scripts/generate_data.py`, with
+ground-truth labels in `eval/labels.csv` that were **hand-reviewed** (using
+machine-generated labels unreviewed would make the accuracy number circular).
+
+| Eval | Result |
+|------|--------|
+| **Classification accuracy** (`eval/test_classification.py`) | **category 96.2%** (77/80), **subcategory 90.0%** (72/80) |
+| **Q&A pass rate** (`eval/test_qa.py`) | **100%** (10/10) |
 
 ```bash
-python -m src.core.pipeline data/bank_statement.csv
+python eval/test_classification.py
+python eval/test_qa.py
 ```
 
-## Layout
+Both run with zero LLM classification calls once the statement is processed (the
+classifier is cache-backed) and score the same components the bot uses. Numbers
+above are for `cerebras / gpt-oss-120b`; switching provider/model re-classifies
+(the cache is keyed by provider+model) and may shift them.
 
-```
-src/core/parse.py      pandas → canonical transactions (Revolut column map)
-src/core/taxonomy.py   the three buckets: revenue / expense / excluded
-src/core/classify.py   TEMPORARY rule classifier (replaced by LLM in Phase 2)
-src/core/store.py      SQLite: transactions + classification_cache
-src/core/aggregate.py  deterministic roll-up + statement formatting
-src/core/pipeline.py   parse → classify → store → aggregate
-src/bot/main.py        python-telegram-bot, polling mode
-```
+The remaining classification misses are genuinely ambiguous rows (e.g. a terse
+`INV 0042`, an `SQ *` merchant, a bare `PAYMENT`) and subcategory judgment calls
+within `expense` (e.g. ink/toner as `cogs` vs `supplies`) — see the mismatch list
+printed by the eval.
+
+## Limitations (honest)
+
+- **Cash-basis only.** This is a categorized summary of cash movements — not a
+  balance sheet / statement of financial position, and it does not do accrual
+  accounting (no matching invoices to payments).
+- **Single bank layout.** Only the **Revolut** export layout is parsed. Other banks
+  need a new column mapping (the mapping lives in one config dict, so it's a small
+  change — but it is a change).
+- **XLSX/CSV only.** No PDF/scan/photo statement ingestion.
+- **Multilingual-ready, English-demoed.** The classifier prompt and embeddings are
+  language-agnostic (built for RU/KY/EN), but the committed demo runs on English
+  Revolut data; RU/KY accuracy is not yet measured.
+- **Synthetic demo data.** `data/bank_statement.csv` and the invoices under
+  `data/invoices/` are generated, not real. Numbers are illustrative.
+- **LLM classification, not certified bookkeeping.** Each classification carries a
+  confidence and a stored justification, and low-confidence rows are flagged for
+  review — but the labels are a model's best judgment, not an accountant's.
+- **The real adoption friction is upstream.** In this market, *getting the statement
+  out of the bank* — many accounts are in-person-pickup or PDF-only — is the hard
+  part. The bot assumes you already have a clean CSV/XLSX export; obtaining one is
+  often the actual bottleneck.
