@@ -35,6 +35,11 @@ from src.core import aggregate, pipeline, qa_agent, store
 logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s %(message)s", level=logging.INFO
 )
+# SECURITY: httpx/httpcore log full request URLs at INFO — for Telegram that
+# includes the bot token (.../bot<TOKEN>/getUpdates). Keep them at WARNING so the
+# token never lands in console output or log files.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 log = logging.getLogger("accounting-bot")
 
 START_TEXT = (
