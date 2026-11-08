@@ -12,7 +12,7 @@ openpyxl>=3.1                 # XLSX reading for pandas
 python-dotenv>=1.0            # load secrets from .env
 
 # --- Phase 2 (active): LLM classifier + LangGraph pipeline ---
-langgraph>=1.4                # parse->classify->store->aggregate->validate graph
+langgraph>=1.2,<2             # parse->classify->store->aggregate->validate graph
 langchain-core>=1.4.7         # messages + structured output (pin: langgraph 1.x needs it)
 langchain-cerebras>=0.5       # ChatCerebras (default provider)
 langchain-google-genai>=2.0   # ChatGoogleGenerativeAI (Gemini, alternative)
