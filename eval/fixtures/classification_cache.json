@@ -1,0 +1,398 @@
+{
+  "provider": "cerebras",
+  "model": "gpt-oss-120b",
+  "predictions": [
+    {
+      "normalized_description": "adobe subscription",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Adobe subscription is a software service cost, an operating expense (other_opex)."
+    },
+    {
+      "normalized_description": "amzn mktp uk",
+      "category": "expense",
+      "subcategory": "cogs",
+      "confidence": 0.65,
+      "justification": "[gpt-oss-120b] Card payment to Amazon Marketplace likely represents purchase of inventory or goods for resale, which is a cost of goods sold."
+    },
+    {
+      "normalized_description": "amzn mktp uk refund",
+      "category": "excluded",
+      "subcategory": "refund",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a refund from Amazon Marketplace, which is a return of a previous purchase, not new revenue."
+    },
+    {
+      "normalized_description": "apple store macbook pro",
+      "category": "excluded",
+      "subcategory": "capital_purchase",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Purchase of a MacBook Pro is a durable equipment acquisition, classified as a capital purchase (excluded)."
+    },
+    {
+      "normalized_description": "atm withdrawal high st",
+      "category": "excluded",
+      "subcategory": "owner_draw",
+      "confidence": 0.7,
+      "justification": "[gpt-oss-120b] ATM withdrawal with no business purpose indicated is treated as owner taking cash for personal use, thus classified as owner_draw under excluded."
+    },
+    {
+      "normalized_description": "brauhaus münchen gmbh",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.92,
+      "justification": "[gpt-oss-120b] CARD_PAYMENT to Brauhaus München GmbH is an outgoing payment to a restaurant/brewery, indicating a business expense such as meals or entertainment, which falls under other_opex."
+    },
+    {
+      "normalized_description": "british gas",
+      "category": "expense",
+      "subcategory": "utilities",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Card payment to British Gas is a utility bill (gas), which is an operating expense under utilities."
+    },
+    {
+      "normalized_description": "bt internet",
+      "category": "expense",
+      "subcategory": "utilities",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] BT INTERNET is a payment for internet service, which is a telecom utility expense."
+    },
+    {
+      "normalized_description": "canva pro",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Canva Pro is a software subscription used for business operations, which is an operating expense (other_opex)."
+    },
+    {
+      "normalized_description": "dell monitor refurb",
+      "category": "excluded",
+      "subcategory": "capital_purchase",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Card payment for a Dell monitor (refurbished) is a purchase of durable equipment, which falls under capital_purchase, an excluded category."
+    },
+    {
+      "normalized_description": "exchange eur to gbp",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Currency exchange between the business's own EUR and GBP balances is a movement of funds, not income or expense."
+    },
+    {
+      "normalized_description": "exchange gbp to eur",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Currency exchange between the business's own GBP and EUR balances is a transfer of funds, not income or expense."
+    },
+    {
+      "normalized_description": "facebook ads",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Facebook Ads are a payment for advertising, an operating expense not a cost of goods, rent, etc., so classified as other_opex."
+    },
+    {
+      "normalized_description": "funds from a founder personal",
+      "category": "excluded",
+      "subcategory": "owner_contribution",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Transfer from founder's personal account to the business is an owner contribution, which is excluded from profit."
+    },
+    {
+      "normalized_description": "google workspace",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Google Workspace is a software subscription expense for the business, fitting other operating expenses."
+    },
+    {
+      "normalized_description": "gumroad sales payout",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Gumroad payout represents money earned from sales of goods/services, i.e., revenue, despite the TRANSFER type."
+    },
+    {
+      "normalized_description": "hmrc paye",
+      "category": "expense",
+      "subcategory": "taxes",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] PAYE payment to HMRC is a tax liability payment, an operating expense under taxes."
+    },
+    {
+      "normalized_description": "hmrc vat",
+      "category": "expense",
+      "subcategory": "taxes",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a VAT payment to HMRC, which is a tax expense, not a transfer of own funds."
+    },
+    {
+      "normalized_description": "hmrc vat refund",
+      "category": "excluded",
+      "subcategory": "refund",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] HMRC VAT REFUND is a tax refund, which belongs to the excluded bucket under refund."
+    },
+    {
+      "normalized_description": "ikea business",
+      "category": "excluded",
+      "subcategory": "capital_purchase",
+      "confidence": 0.7,
+      "justification": "[gpt-oss-120b] IKEA purchase likely for durable office furniture/equipment, which is a capital asset, not an operating expense"
+    },
+    {
+      "normalized_description": "ink & toner co",
+      "category": "expense",
+      "subcategory": "supplies",
+      "confidence": 0.96,
+      "justification": "[gpt-oss-120b] Ink & Toner purchase is a consumable office supply, an operating expense, not a direct cost of goods sold."
+    },
+    {
+      "normalized_description": "inv 0042",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.7,
+      "justification": "[gpt-oss-120b] The transaction type is TRANSFER, indicating movement between the business's own accounts. The description only references an invoice number, not indicating a sale or expense, so it is treated as an internal transfer."
+    },
+    {
+      "normalized_description": "linkedin ads",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] LinkedIn ads are a marketing expense, an operating cost (advertising) classified under other_opex."
+    },
+    {
+      "normalized_description": "loan disbursement barclays business",
+      "category": "excluded",
+      "subcategory": "loan_in",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a loan disbursement from Barclays to the business, which is a loan received and thus classified as excluded → loan_in."
+    },
+    {
+      "normalized_description": "loan repayment barclays",
+      "category": "excluded",
+      "subcategory": "loan_out",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a repayment of a loan (principal) to Barclays, which is an outflow classified as loan_out under excluded."
+    },
+    {
+      "normalized_description": "owner draw - a founder",
+      "category": "excluded",
+      "subcategory": "owner_draw",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Description explicitly states OWNER DRAW by a founder, which is an owner taking money out, classified as excluded > owner_draw."
+    },
+    {
+      "normalized_description": "payment",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The transaction type is TRANSFER, indicating a movement of money between accounts, which belongs to the excluded bucket under subcategory transfer."
+    },
+    {
+      "normalized_description": "payment from acme ltd inv-1001",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment from a customer for an invoice, which is income from sales, so it belongs to revenue."
+    },
+    {
+      "normalized_description": "payment from acme ltd inv-1002",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment from a client (ACME LTD) for an invoice, which is money earned from sales, i.e., revenue."
+    },
+    {
+      "normalized_description": "payment from acme ltd inv-1002b",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment from a client (ACME LTD) for an invoice, which is money earned from sales, i.e., revenue."
+    },
+    {
+      "normalized_description": "payment from acme ltd inv-1003",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment from a client (ACME LTD) for an invoice, which is money earned from selling goods/services, i.e., revenue."
+    },
+    {
+      "normalized_description": "payment from acme ltd inv-1004",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment from a client (ACME LTD) for an invoice, which is money earned from selling goods/services, i.e., revenue."
+    },
+    {
+      "normalized_description": "payment from bennett & co",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.95,
+      "justification": "[gpt-oss-120b] The description indicates a payment received from a client (Bennett & Co), which is income from selling goods/services, so it is revenue."
+    },
+    {
+      "normalized_description": "payment from harlow prints",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.92,
+      "justification": "[gpt-oss-120b] The description indicates a payment received from a client (Harlow Prints), which is money earned from selling goods/services, so it is revenue despite the TRANSFER type."
+    },
+    {
+      "normalized_description": "payment from orton design",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.88,
+      "justification": "[gpt-oss-120b] The description indicates a payment received from a client (Orton Design), which is income from selling goods/services, so it is revenue despite the TRANSFER type."
+    },
+    {
+      "normalized_description": "payment from riverside cafe",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.92,
+      "justification": "[gpt-oss-120b] The description indicates a payment received from a customer (Riverside Cafe), which is income from selling goods/services, so it belongs to revenue."
+    },
+    {
+      "normalized_description": "payment from savings vault",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a movement of funds from a savings vault, which is an internal transfer between the owner's accounts, not revenue or expense."
+    },
+    {
+      "normalized_description": "paypal *paperworld",
+      "category": "expense",
+      "subcategory": "supplies",
+      "confidence": 0.92,
+      "justification": "[gpt-oss-120b] PAYPAL *PAPERWORLD indicates a purchase of paper supplies via PayPal, which is an operating expense for office consumables."
+    },
+    {
+      "normalized_description": "print materials ltd",
+      "category": "expense",
+      "subcategory": "cogs",
+      "confidence": 0.92,
+      "justification": "[gpt-oss-120b] CARD_PAYMENT to PRINT MATERIALS LTD is a purchase of printing materials used to produce goods, a direct cost of goods sold."
+    },
+    {
+      "normalized_description": "refund - staples office supplies",
+      "category": "excluded",
+      "subcategory": "refund",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a refund of a purchase (office supplies), which is a return of money, not revenue or expense, so it belongs to the excluded bucket under 'refund'."
+    },
+    {
+      "normalized_description": "rent - westgate properties",
+      "category": "expense",
+      "subcategory": "rent",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] The description indicates a payment for rent to Westgate Properties, which is an operating expense (rent)."
+    },
+    {
+      "normalized_description": "revolut card delivery fee",
+      "category": "expense",
+      "subcategory": "fees",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Card delivery fee is a bank/card fee, an operating expense under fees."
+    },
+    {
+      "normalized_description": "revolut fx fee",
+      "category": "expense",
+      "subcategory": "fees",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] FX fee is a payment processor/bank fee, an operating expense under fees"
+    },
+    {
+      "normalized_description": "revolut monthly plan fee",
+      "category": "expense",
+      "subcategory": "fees",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Monthly plan fee from Revolut is a bank/card/payment processor fee, an operating expense under fees."
+    },
+    {
+      "normalized_description": "royal mail postage",
+      "category": "expense",
+      "subcategory": "supplies",
+      "confidence": 0.96,
+      "justification": "[gpt-oss-120b] Royal Mail postage is a consumable office supply expense for mailing, not a capital purchase or revenue."
+    },
+    {
+      "normalized_description": "ryman stationery",
+      "category": "expense",
+      "subcategory": "supplies",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Card payment for stationery indicates purchase of office consumables, which is an operating expense classified as supplies."
+    },
+    {
+      "normalized_description": "salary - a patel",
+      "category": "expense",
+      "subcategory": "salaries",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Description indicates a salary payment to an employee (A Patel); salary is an operating expense under salaries despite the TRANSFER type."
+    },
+    {
+      "normalized_description": "salary - j smith",
+      "category": "expense",
+      "subcategory": "salaries",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates a salary payment to J Smith, which is an operating expense under salaries, regardless of the TRANSFER type."
+    },
+    {
+      "normalized_description": "slack subscription",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Slack subscription is a software service expense, an operating cost not classified as cogs, rent, salaries, utilities, supplies, fees, or taxes."
+    },
+    {
+      "normalized_description": "sq *blue room studio",
+      "category": "expense",
+      "subcategory": "rent",
+      "confidence": 0.6,
+      "justification": "[gpt-oss-120b] The description indicates a payment to a studio (Blue Room Studio), likely for renting space, which is an operating expense under rent. Although the transaction type is TRANSFER, the meaning points to a rent expense."
+    },
+    {
+      "normalized_description": "staples office supplies",
+      "category": "expense",
+      "subcategory": "supplies",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Purchase of office supplies from Staples is an operating cost for consumables, fitting the 'supplies' expense subcategory."
+    },
+    {
+      "normalized_description": "stripe payout",
+      "category": "revenue",
+      "subcategory": "revenue",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Stripe payout is the business receiving money earned from sales; despite the TRANSFER type, it represents revenue."
+    },
+    {
+      "normalized_description": "thames water",
+      "category": "expense",
+      "subcategory": "utilities",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] Payment to Thames Water is a utility bill (water), thus an expense under utilities."
+    },
+    {
+      "normalized_description": "to savings vault",
+      "category": "excluded",
+      "subcategory": "transfer",
+      "confidence": 0.99,
+      "justification": "[gpt-oss-120b] The description indicates moving money to a savings vault, which is an internal transfer of the owner's own funds, not an expense or revenue."
+    },
+    {
+      "normalized_description": "top-up by card *4421",
+      "category": "excluded",
+      "subcategory": "owner_contribution",
+      "confidence": 0.97,
+      "justification": "[gpt-oss-120b] Top‑up by card is an inbound movement of owner’s personal funds into the business account, not sales revenue; it is an owner contribution."
+    },
+    {
+      "normalized_description": "çigkoftem istanbul",
+      "category": "expense",
+      "subcategory": "other_opex",
+      "confidence": 0.78,
+      "justification": "[gpt-oss-120b] Card payment at a coffee shop in Istanbul is an outflow for a consumable like coffee/meal, fitting expense other_opex rather than supplies."
+    }
+  ]
+}

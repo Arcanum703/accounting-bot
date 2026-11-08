@@ -8,37 +8,36 @@ The classifier is cache-backed (keyed by provider+model+description), so this ru
 with zero LLM calls once the demo statement has been processed — and it scores the
 SAME classifier the bot uses.
 
-Run:  python eval/test_classification.py
+Run:  python eval/test_classification.py            (uses the local store)
+      python eval/test_classification.py --fixture  (recorded predictions, no LLM; used in CI)
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from dotenv import load_dotenv  # noqa: E402
 
+from fixture import seed_cache  # noqa: E402
 from src.core import classify, llm, store  # noqa: E402
 
 LABELS = Path(__file__).resolve().parent / "labels.csv"
 
 
-def main() -> None:
-    load_dotenv()
-    conn = store.get_connection()
-    store.init_db(conn)
-
-    provider, model = llm.get_active()
+def evaluate(conn) -> tuple[int, int, int, list]:
+    """Return (n, category hits, subcategory hits, mismatches) over labels.csv."""
     with LABELS.open(encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
 
-    n = len(rows)
     cat_ok = sub_ok = 0
     mismatches = []
-
     for r in rows:
         # Cache hit (classified during ingest). Type isn't in labels.csv; the cache
         # key is the description, so the stored result (which used Type) is returned.
@@ -49,6 +48,26 @@ def main() -> None:
         sub_ok += sub_hit
         if not (cat_hit and sub_hit):
             mismatches.append((r, pred))
+    return len(rows), cat_ok, sub_ok, mismatches
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fixture", action="store_true",
+                        help="score the recorded predictions in eval/fixtures (no LLM calls)")
+    args = parser.parse_args()
+
+    load_dotenv()
+    if args.fixture:
+        conn = store.get_connection(str(Path(tempfile.mkdtemp()) / "eval.db"))
+        store.init_db(conn)
+        seed_cache(conn)
+    else:
+        conn = store.get_connection()
+        store.init_db(conn)
+
+    provider, model = llm.get_active()
+    n, cat_ok, sub_ok, mismatches = evaluate(conn)
 
     print(f"Classifier: {provider} / {model}")
     print(f"Labels:     {n} rows ({LABELS})")

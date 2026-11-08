@@ -1,5 +1,10 @@
 # Accounting Telegram Bot
 
+[![CI](https://github.com/Arcanum703/accounting-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/Arcanum703/accounting-bot/actions/workflows/ci.yml)
+
+**Classification accuracy 96.2% (category) / 90.0% (subcategory)** on 80 hand-reviewed
+transactions · **Q&A eval 10/10** · amounts are parsed by pandas and never produced by the LLM.
+
 A Telegram bot that turns a bank statement (CSV/XLSX) into a **cash-basis income
 statement**, plus an agentic Q&A interface over the same transactions. Send a
 statement file into the chat; the bot parses it, classifies each transaction with
@@ -79,6 +84,13 @@ cp .env.example .env        # then fill in the values below
 python -m src.bot.main
 ```
 
+Or with Docker (CPU-only, embedding model baked in; the store persists in a volume):
+
+```bash
+docker build -t accounting-bot .
+docker run --env-file .env -v accounting-data:/data accounting-bot
+```
+
 Then in Telegram: send `data/bank_statement.csv` to your bot. It replies with the
 income statement. After that, just ask questions in plain language. Commands:
 `/statement` (re-send), `/reset` (clear store + cache + vector index), `/start` · `/help`.
@@ -101,9 +113,24 @@ machine-generated labels unreviewed would make the accuracy number circular).
 | **Q&A pass rate** (`eval/test_qa.py`) | **100%** (10/10) |
 
 ```bash
-python eval/test_classification.py
+python eval/test_classification.py             # scores your local store
+python eval/test_classification.py --fixture   # scores the recorded predictions, no LLM or key
 python eval/test_qa.py
 ```
+
+### Tests and CI
+
+`pytest` runs unit tests over the deterministic core (parse → cached classify → store →
+aggregate → validate): parsed amounts match the file exactly, net income excludes the
+`excluded` bucket, the totals reconcile, re-uploads insert nothing, and duplicates and
+unknown categories are flagged. Classification comes from
+`eval/fixtures/classification_cache.json`, the classifier's recorded `cerebras / gpt-oss-120b`
+predictions (re-export with `scripts/export_eval_fixture.py`), and a stand-in model fails the
+test if anything reaches the LLM. A regression test keeps accuracy at or above 95% / 90%.
+
+GitHub Actions runs the tests, the fixture-based classification eval and a Docker build on
+every push. Install the light test set with `pip install -r requirements-dev.txt`. The Q&A eval
+needs a live LLM key and the embedding model, so it runs locally rather than in CI.
 
 Both run with zero LLM classification calls once the statement is processed (the
 classifier is cache-backed) and score the same components the bot uses. Numbers

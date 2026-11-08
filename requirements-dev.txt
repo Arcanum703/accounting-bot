@@ -1,0 +1,7 @@
+# Lightweight set for the unit tests and the fixture-based classification eval.
+# No LLM SDKs, vector store or embedding model needed.
+pandas>=2.0
+openpyxl>=3.1
+pydantic>=2.0
+python-dotenv>=1.0
+pytest>=8.0
